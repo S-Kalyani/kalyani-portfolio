@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sabbavarapu Kalyani | Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;800&display=swap');
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow: hidden; /* Hide main body scrollbar to allow only content scroll */
+        }
+        .main-container {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .sidebar {
+            background-color: #121212;
+            min-width: 280px;
+            max-width: 300px;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+        .profile-photo-sidebar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #00afaf;
+            margin-bottom: 1rem;
+        }
+        .main-content-scrollable {
+            flex-grow: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 2rem 4rem;
+            position: relative;
+        }
+        .vertical-text-container {
+            position: absolute;
+            top: 50%;
+            right: -2rem;
+            transform: translateY(-50%) rotate(90deg);
+            white-space: nowrap;
+            font-size: 0.875rem;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+        }
+        .awards-badge {
+            position: absolute;
+            top: 2rem;
+            right: 0;
+            transform: translateX(50%) rotate(45deg);
+            background-color: #00afaf;
+            color: black;
+            padding: 0.5rem 2rem;
+            font-weight: bold;
+            font-size: 0.875rem;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 20% 50%);
+            text-transform: uppercase;
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #00afaf;
+        }
+        .hero-title {
+            font-size: 3.5rem; /* Reduced from 4rem */
+            line-height: 1.1;
+            font-weight: 800;
+        }
+        .highlight-text {
+            color: #00afaf; /* A vibrant teal color */
+        }
+        .project-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 175, 175, 0.2);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #1a1a1a;
+            color: #fefefe;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: #fefefe;
+        }
+        .relevance-output {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background-color: #00afaf20;
+            border-left: 4px solid #00afaf;
+            color: #99ffff;
+            font-style: italic;
+            border-radius: 0.25rem;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: opacity 0.5s ease-out, max-height 0.5s ease-out;
+        }
+        .relevance-output.show {
+            opacity: 1;
+            max-height: 100px;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                height: auto;
+            }
+            .sidebar {
+                min-width: 100%;
+                height: auto;
+                position: relative;
+                padding-bottom: 0;
+            }
+            .sidebar .top-content {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+                padding-bottom: 1rem;
+            }
+            .sidebar .nav-links {
+                display: none;
+            }
+            .main-content-scrollable {
+                padding: 1rem;
+            }
+            .hero-title {
+                font-size: 3rem;
+            }
+            .vertical-text-container, .awards-badge, .sound-toggle {
+                display: none;
+            }
+            .sidebar .mobile-toggle {
+                display: block;
+            }
+            .sidebar .nav-links.active {
+                display: flex;
+                flex-direction: column;
+            }
+        }
+        .sound-toggle {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            color: #aaa;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .sound-toggle:hover {
+            color: #00afaf;
+        }
+        /* Adjusted font sizes */
+        h2.text-5xl { /* Section titles like "My Skills" */
+            font-size: 3.5rem; /* Reduced from 5xl */
+        }
+        h3.text-xl { /* Skill/Project card titles */
+            font-size: 1.125rem; /* Reduced from xl to lg */
+        }
+        p.text-sm { /* General paragraph text */
+            font-size: 0.875rem; /* Remains sm, but ensures consistency */
+        }
+        p.text-base { /* Hero section description */
+            font-size: 0.95rem; /* Slightly reduced */
+        }
+        .text-lg { /* Nav links, sidebar title */
+            font-size: 1.05rem; /* Slightly reduced */
+        }
+        .text-xl { /* Nav links on hover */
+            font-size: 1.15rem; /* Slightly reduced */
+        }
+        @media (min-width: 768px) {
+            .hero-title {
+                font-size: 5.5rem; /* Adjusted for desktop */
+            }
+        }
+
+        /* Removed hero-photo-container styles as the large photo is removed */
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+
+        <!-- Left Sidebar -->
+        <aside class="sidebar z-50">
+            <div class="top-content">
+                <div>
+                    <!-- New photo placeholder in sidebar -->
+                    <img src="C:\Users\harsh\OneDrive\Documents\notes\kalyanipic.jpg" alt="Sabbavarapu Kalyani Profile Photo" class="profile-photo-sidebar">
+                    <h1 class="text-4xl font-extrabold text-[#00afaf]">Kalyani</h1>
+                    <h2 class="text-gray-400 text-lg font-light mt-1">Web Developer</h2>
+                </div>
+                <button id="mobile-menu-toggle" class="md:hidden text-2xl text-white">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <nav id="nav-links" class="nav-links space-y-4 text-xl font-medium mt-10 md:mt-0">
+                <a href="#about" class="nav-link block">About</a>
+                <a href="#skills" class="nav-link block">My Skills</a>
+                <a href="#work" class="nav-link block">Work</a>
+                <a href="#contact" class="nav-link block">Contact</a>
+            </nav>
+            
+            <div class="mt-10 md:mt-0">
+                <div class="text-gray-500 mb-2">Connect</div>
+                <div class="flex space-x-4 text-gray-400">
+                    <a href="#" class="hover:text-[#00afaf] transition-colors"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="hover:text-[#00afaf] transition-colors"><i class="fab fa-github"></i></a>
+                    <a href="mailto:1136081s.kalyani@gmail.com" class="hover:text-[#00afaf] transition-colors"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Content Area -->
+        <main class="main-content-scrollable">
+            
+            <!-- Hero Section -->
+            <section id="about" class="h-screen flex items-center justify-start relative md:flex-row flex-col">
+                <div class="absolute inset-0">
+                    <div class="awards-badge">Honors</div>
+                    <div class="awards-badge top-[calc(2rem+2.5rem)]">Awards</div>
+                </div>
+                <div class="relative z-10 md:w-full md:text-left text-center">
+                    <h3 class="text-gray-400 text-lg md:text-xl font-light mb-2">&lt;h1&gt;</h3>
+                    <h1 class="hero-title">
+                        Hi,<br>
+                        I'm <span class="highlight-text">Kalyani</span>,<br>
+                        Chemical Engineer<br>
+                        pivoting to IT
+                    </h1>
+                    <h3 class="text-gray-400 text-lg md:text-xl font-light mt-4">&lt;/h1&gt;</h3>
+                    <p class="text-sm md:text-base font-light italic mt-4 max-w-lg text-gray-300 md:mx-0 mx-auto">
+                        A highly motivated and analytical Chemical Engineering student with a proven foundation in problem-solving and process optimization. I am eager to apply my technical expertise to build innovative solutions in the tech industry.
+                    </p>
+                </div>
+                <!-- Existing large photo removed from here -->
+            </section>
+
+            <!-- Skills Section -->
+            <section id="skills" class="py-16">
+                <h2 class="text-5xl font-bold mb-12">My Skills</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-[#1a1a1a] p-8 rounded-lg">
+                        <i class="fab fa-python text-5xl text-[#00afaf] mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Python & C</h3>
+                        <p class="text-gray-400">Practical programming skills in Python and C, providing a solid foundation in software development and logical thinking.</p>
+                    </div>
+                    <div class="bg-[#1a1a1a] p-8 rounded-lg">
+                        <i class="fas fa-brain text-5xl text-[#00afaf] mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Artificial Intelligence</h3>
+                        <p class="text-gray-400">Completed an online internship on "Artificial Intelligence with Python", gaining foundational knowledge in AI concepts.</p>
+                    </div>
+                    <div class="bg-[#1a1a1a] p-8 rounded-lg">
+                        <i class="fas fa-drafting-compass text-5xl text-[#00afaf] mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Engineering Software</h3>
+                        <p class="text-gray-400">Proficient in MATLAB for programming and simulation, and AUTOCAD for equipment design and drawing.</p>
+                    </div>
+                    <div class="bg-[#1a1a1a] p-8 rounded-lg">
+                        <i class="fas fa-lightbulb text-5xl text-[#00afaf] mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Problem Solving</h3>
+                        <p class="text-gray-400">Proven ability to analyze processes and identify deficiencies, as demonstrated during my internship at Dr. Reddy's Laboratories.</p>
+                    </div>
+                    <div class="bg-[#1a1a1a] p-8 rounded-lg">
+                        <i class="fas fa-chart-line text-5xl text-[#00afaf] mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Data Analysis</h3>
+                        <p class="text-gray-400">Strong analytical skills in data interpretation, applied in projects like "Material & Energy Balance Over Sulfuric Acid Manufacturing Plant".</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Projects & Experience Section -->
+            <section id="work" class="py-16">
+                <h2 class="text-5xl font-bold mb-12">My Work</h2>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="project-card bg-[#1a1a1a] rounded-lg overflow-hidden" data-project="ai-internship">
+                        <img src="https://placehold.co/600x400/00afaf/ffffff?text=AI+Internship" alt="AI Internship" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2">AI with Python Internship</h3>
+                            <p class="text-gray-400 text-sm">VEERANDAR IT SOLUTIONS</p>
+                        </div>
+                    </div>
+                    <div class="project-card bg-[#1a1a1a] rounded-lg overflow-hidden" data-project="solvent-recovery">
+                        <img src="https://placehold.co/600x400/5f9ea0/ffffff?text=Process+Analysis" alt="Solvent Recovery" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2">Solvent Recovery System Analysis</h3>
+                            <p class="text-gray-400 text-sm">Dr. Reddy's Laboratories Ltd</p>
+                        </div>
+                    </div>
+                    <div class="project-card bg-[#1a1a1a] rounded-lg overflow-hidden" data-project="python-calculator">
+                        <img src="https://placehold.co/600x400/00afaf/ffffff?text=Python+Calculator" alt="Python Calculator" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2">Python Calculator</h3>
+                            <p class="text-gray-400 text-sm">Personal Project (Python)</p>
+                        </div>
+                    </div>
+                    <div class="project-card bg-[#1a1a1a] rounded-lg overflow-hidden" data-project="python-tictactoe">
+                        <img src="https://placehold.co/600x400/5f9ea0/ffffff?text=Python+TicTacToe" alt="Python Tic-Tac-Toe" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2">Python Tic-Tac-Toe Game</h3>
+                            <p class="text-gray-400 text-sm">Personal Project (Python)</p>
+                        </div>
+                    </div>
+                    <div class="project-card bg-[#1a1a1a] rounded-lg overflow-hidden" data-project="python-snake">
+                        <img src="https://placehold.co/600x400/a8d5d5/333333?text=Python+Snake" alt="Python Snake Game" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2">Python Snake Game</h3>
+                            <p class="text-gray-400 text-sm">Personal Project (Python)</p>
+                        </div>
+                    </div>
+                    <div class="project-card bg-[#1a1a1a] rounded-lg overflow-hidden" data-project="hydrogen-production">
+                        <img src="https://placehold.co/600x400/a8d5d5/333333?text=Hydrogen+Project" alt="Hydrogen Production" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2">Hydrogen Production using Shell Gasification</h3>
+                            <p class="text-gray-400 text-sm">Academic Project</p>
+                        </div>
+                    </div>
+                    <div class="project-card bg-[#1a1a1a] rounded-lg overflow-hidden" data-project="water-purification">
+                        <img src="https://placehold.co/600x400/008080/ffffff?text=Water+Purification" alt="Water Purification" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2">Two-Stage Water Purification</h3>
+                            <p class="text-gray-400 text-sm">Design Thinking Project</p>
+                        </div>
+                    </div>
+                    <div class="project-card bg-[#1a1a1a] rounded-lg overflow-hidden" data-project="bio-based">
+                        <img src="https://placehold.co/600x400/008080/ffffff?text=Bio+Water" alt="Bio Water" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2">Bio-based Water Purification</h3>
+                            <p class="text-gray-400 text-sm">Socially Relevant Project</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Education Section -->
+            <section id="education" class="py-16">
+                 <h2 class="text-5xl font-bold mb-12">Education</h2>
+                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-[#1a1a1a] p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-center mb-4 text-[#00afaf]">Academic Performance</h3>
+                        <div class="chart-container h-80">
+                            <canvas id="educationChart"></canvas>
+                        </div>
+                    </div>
+                     <div class="space-y-4">
+                        <div class="bg-[#1a1a1a] p-6 rounded-lg">
+                            <h4 class="font-bold text-lg text-white">Bachelor of Technology</h4>
+                            <p class="text-gray-400">Chemical Engineering</p>
+                            <p class="text-sm text-gray-500 mt-1">MAHARAJ VIJAYARAM GAJAPATHIRAJ COLLEGE OF ENGINEERING | 2021-2025</p>
+                            <p class="text-sm text-gray-500">CGPA: 6.7</p>
+                        </div>
+                        <div class="bg-[#1a1a1a] p-6 rounded-lg">
+                            <h4 class="font-bold text-lg text-white">Class XII (MPC)</h4>
+                            <p class="text-gray-400">SRI CHAITANYA JUNIOR COLLEGE | 2019-2021</p>
+                            <p class="text-sm text-gray-500 mt-1">Percentage: 84%</p>
+                        </div>
+                        <div class="bg-[#1a1a1a] p-6 rounded-lg">
+                            <h4 class="font-bold text-lg text-white">Class X</h4>
+                            <p class="text-gray-400">PRATHIBA VIDYALAYAM SCHOOL | 2019</p>
+                            <p class="text-sm text-gray-500 mt-1">Percentage: 97%</p>
+                        </div>
+                     </div>
+                 </div>
+            </section>
+
+            <!-- Contact Section -->
+            <section id="contact" class="py-16">
+                <h2 class="text-5xl font-bold mb-12">Contact</h2>
+                <div class="flex flex-col md:flex-row md:space-x-8 space-y-4 md:space-y-0 text-gray-300">
+                    <div class="flex items-center">
+                        <i class="fas fa-envelope text-2xl text-[#00afaf] mr-3"></i>
+                        <span>1136081s.kalyani@gmail.com</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-phone-alt text-2xl text-[#00afaf] mr-3"></i>
+                        <span>9948533658</span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="vertical-text-container">scroll down &rarr;</div>
+            <div class="sound-toggle"><i class="fas fa-volume-up"></i></div>
+            
+        </main>
+    </div>
+
+    <!-- Project Detail Modal -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3 id="modalTitle" class="text-2xl font-bold mb-4 text-[#00afaf]"></h3>
+            <p id="modalOrganization" class="text-base font-medium text-gray-500 mb-4"></p>
+            <img id="modalImage" src="" alt="Project Image" class="w-full h-48 object-cover rounded-md mb-4">
+            <p id="modalDescription" class="text-gray-300 mb-4"></p>
+            <div id="modalRelevance" class="relevance-output"></div>
+            <button id="generateRelevanceModalBtn" class="mt-4 px-4 py-2 bg-[#00afaf] text-black rounded-full font-medium hover:bg-[#008c8c] transition duration-300 ease-in-out">✨ Show IT Relevance</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const projectData = {
+                'ai-internship': {
+                    title: "AI with Python Internship",
+                    category: "ai",
+                    organization: "VEERANDAR IT SOLUTIONS",
+                    description: "Gained practical experience in core AI concepts and their implementation using Python, providing a foundational understanding of how AI is applied in real-world scenarios.",
+                    image: "https://placehold.co/600x400/00afaf/ffffff?text=AI+Internship"
+                },
+                'solvent-recovery': {
+                    title: "Solvent Recovery System Analysis",
+                    category: "engineering",
+                    organization: "Dr. Reddy's Laboratories Ltd.",
+                    description: "Analyzed current processes to identify deficiencies in the solvent recovery system and provided actionable recommendations for future development, honing analytical and problem-solving skills.",
+                    image: "https://placehold.co/600x400/5f9ea0/ffffff?text=Process+Analysis"
+                },
+                'python-calculator': {
+                    title: "Python Calculator",
+                    category: "python-apps",
+                    organization: "Personal Project (Python)",
+                    description: "Developed a command-line calculator application in Python, demonstrating fundamental programming concepts such as input/output handling, conditional logic, and basic arithmetic operations.",
+                    image: "https://placehold.co/600x400/00afaf/ffffff?text=Python+Calculator"
+                },
+                'python-tictactoe': {
+                    title: "Python Tic-Tac-Toe Game",
+                    category: "python-apps",
+                    organization: "Personal Project (Python)",
+                    description: "Implemented the classic Tic-Tac-Toe game in Python, showcasing game logic, user interaction, and state management within a console-based environment.",
+                    image: "https://placehold.co/600x400/5f9ea0/ffffff?text=Python+TicTacToe"
+                },
+                'python-snake': {
+                    title: "Python Snake Game",
+                    category: "python-apps",
+                    organization: "Personal Project (Python)",
+                    description: "Created a simple Snake game using Python, involving concepts like game loops, collision detection, dynamic array manipulation for the snake's body, and real-time user input.",
+                    image: "https://placehold.co/600x400/a8d5d5/333333?text=Python+Snake"
+                },
+                'hydrogen-production': {
+                    title: "Hydrogen Production using Shell Gasification",
+                    category: "engineering",
+                    organization: "Academic Project",
+                    description: "Currently working on an advanced process design and analysis project, demonstrating complex system understanding and chemical engineering principles.",
+                    image: "https://placehold.co/600x400/a8d5d5/333333?text=Hydrogen+Project"
+                },
+                'water-purification': {
+                    title: "Two-Stage Water Purification",
+                    category: "engineering",
+                    organization: "Design Thinking Project",
+                    description: "Applied design thinking principles to innovate a practical water purification system, highlighting creativity and the application of engineering fundamentals to solve real-world problems.",
+                    image: "https://placehold.co/600x400/008080/ffffff?text=Water+Purification"
+                },
+                'bio-based': {
+                    title: "Bio-based Water Purification",
+                    category: "engineering",
+                    organization: "Socially Relevant Project",
+                    description: "Leveraged duckweed for environmental health in a project showcasing research, sustainable design, and problem-solving skills for ecological solutions.",
+                    image: "https://placehold.co/600x400/008080/ffffff?text=Bio+Water"
+                }
+            };
+
+            const projectCards = document.querySelectorAll('.project-card');
+            const projectModal = document.getElementById('projectModal');
+            const closeButton = document.querySelector('.close-button');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalOrganization = document.getElementById('modalOrganization');
+            const modalImage = document.getElementById('modalImage');
+            const modalDescription = document.getElementById('modalDescription');
+            const modalRelevance = document.getElementById('modalRelevance');
+            const generateRelevanceModalBtn = document.getElementById('generateRelevanceModalBtn');
+
+            async function generateITRelevance(projectTitle, projectDescription, buttonElement, outputDiv) {
+                const originalButtonText = buttonElement.innerHTML;
+                const originalButtonClasses = buttonElement.className;
+                buttonElement.innerHTML = 'Generating...';
+                buttonElement.disabled = true;
+                buttonElement.className = 'px-4 py-2 rounded-full font-medium bg-gray-400 text-white cursor-not-allowed';
+
+                outputDiv.classList.remove('show');
+                outputDiv.innerHTML = '';
+
+                let chatHistory = [];
+                const prompt = `Given the following project details from a Chemical Engineering student's portfolio, generate a concise, one-sentence statement highlighting its relevance and transferable skills for a general IT sector job (e.g., data analysis, problem-solving, process optimization, logical thinking).
+Project Title: ${projectTitle}
+Project Description: ${projectDescription}
+Focus on: How this project demonstrates skills valuable in IT, even if the domain is chemical engineering.
+Example output: 'This project showcases strong analytical and problem-solving skills, highly transferable to data-driven IT roles.'`;
+
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = { contents: chatHistory };
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        outputDiv.innerHTML = text;
+                        outputDiv.classList.add('show');
+                    } else {
+                        outputDiv.innerHTML = 'Could not generate relevance. Please try again.';
+                        outputDiv.classList.add('show');
+                    }
+                } catch (error) {
+                    console.error('Error calling Gemini API:', error);
+                    outputDiv.innerHTML = 'Error generating relevance. Please try again.';
+                    outputDiv.classList.add('show');
+                } finally {
+                    buttonElement.innerHTML = originalButtonText;
+                    buttonElement.disabled = false;
+                    buttonElement.className = originalButtonClasses;
+                }
+            }
+
+            projectCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const projectKey = card.getAttribute('data-project');
+                    const project = projectData[projectKey];
+                    if (project) {
+                        modalTitle.textContent = project.title;
+                        modalOrganization.textContent = project.organization;
+                        modalImage.src = project.image;
+                        modalDescription.textContent = project.description;
+                        modalRelevance.innerHTML = ''; // Clear previous relevance
+                        modalRelevance.classList.remove('show');
+                        generateRelevanceModalBtn.onclick = () => generateITRelevance(project.title, project.description, generateRelevanceModalBtn, modalRelevance);
+                        projectModal.style.display = 'flex';
+                    }
+                });
+            });
+
+            closeButton.addEventListener('click', () => {
+                projectModal.style.display = 'none';
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === projectModal) {
+                    projectModal.style.display = 'none';
+                }
+            });
+
+            const educationCtx = document.getElementById('educationChart').getContext('2d');
+            new Chart(educationCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Class X', 'Class XII', 'B.Tech (Current)'],
+                    datasets: [{
+                        label: 'Performance (%)',
+                        data: [97, 84, 6.7 * 10],
+                        backgroundColor: ['#00afaf', '#00afaf50', '#00afaf20'],
+                        borderColor: '#00afaf',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                color: '#eee',
+                                callback: function(value) { return value + '%' }
+                            },
+                            grid: { color: '#333' }
+                        },
+                        y: {
+                            ticks: { color: '#eee', font: { family: 'Roboto' } },
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                             callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.x !== null) {
+                                        if (context.label === 'B.Tech (Current)') {
+                                            label += `6.7 CGPA`;
+                                        } else {
+                                            label += `${context.parsed.x}%`;
+                                        }
+                                    }
+                                    return label;
+                                }
+                            },
+                            bodyFont: { family: 'Roboto' },
+                            titleFont: { family: 'Roboto' }
+                        }
+                    }
+                }
+            });
+
+            const soundToggle = document.querySelector('.sound-toggle');
+            const soundIcon = soundToggle.querySelector('i');
+            let soundOn = true;
+            soundToggle.addEventListener('click', () => {
+                if (soundOn) {
+                    soundIcon.classList.remove('fa-volume-up');
+                    soundIcon.classList.add('fa-volume-mute');
+                    soundToggle.innerHTML = '<i class="fas fa-volume-mute"></i> Sound OFF';
+                    soundOn = false;
+                } else {
+                    soundIcon.classList.remove('fa-volume-mute');
+                    soundIcon.classList.add('fa-volume-up');
+                    soundToggle.innerHTML = '<i class="fas fa-volume-up"></i> Sound ON';
+                    soundOn = true;
+                }
+            });
+            
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const navLinks = document.getElementById('nav-links');
+            mobileMenuToggle.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+            });
+            navLinks.addEventListener('click', (e) => {
+                if(e.target.tagName === 'A' || e.target.closest('a')) {
+                    navLinks.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+/
