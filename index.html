@@ -231,6 +231,27 @@
         }
 
         /* Removed hero-photo-container styles as the large photo is removed */
+
+        .sample-output-container {
+            margin-top: 1rem;
+            background-color: #000; /* Dark background for console output */
+            border: 1px solid #00afaf;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #00ff00; /* Green text for console feel */
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap; /* Preserve whitespace and wrap text */
+            opacity: 0;
+            max-height: 0;
+            transition: opacity 0.5s ease-out, max-height 0.5s ease-out;
+        }
+        .sample-output-container.show {
+            opacity: 1;
+            max-height: 200px; /* Adjust as needed */
+        }
     </style>
 </head>
 <body>
@@ -242,7 +263,7 @@
             <div class="top-content">
                 <div>
                     <!-- New photo placeholder in sidebar -->
-                    <img src="kalyanipic.jpg" alt="Sabbavarapu Kalyani Profile Photo" class="profile-photo-sidebar">
+                    <img src="WhatsApp Image 2025-07-14 at 11.35.17_8a3e0734.jpg" alt="Sabbavarapu Kalyani Profile Photo" class="profile-photo-sidebar">
                     <h1 class="text-4xl font-extrabold text-[#00afaf]">Kalyani</h1>
                     <h2 class="text-gray-400 text-lg font-light mt-1">Web Developer</h2>
                 </div>
@@ -278,19 +299,16 @@
                     <div class="awards-badge top-[calc(2rem+2.5rem)]">Awards</div>
                 </div>
                 <div class="relative z-10 md:w-full md:text-left text-center">
-                    <h3 class="text-gray-400 text-lg md:text-xl font-light mb-2">&lt;h1&gt;</h3>
                     <h1 class="hero-title">
                         Hi,<br>
                         I'm <span class="highlight-text">Kalyani</span>,<br>
                         Chemical Engineer<br>
                         pivoting to IT
                     </h1>
-                    <h3 class="text-gray-400 text-lg md:text-xl font-light mt-4">&lt;/h1&gt;</h3>
                     <p class="text-sm md:text-base font-light italic mt-4 max-w-lg text-gray-300 md:mx-0 mx-auto">
                         A highly motivated and analytical Chemical Engineering student with a proven foundation in problem-solving and process optimization. I am eager to apply my technical expertise to build innovative solutions in the tech industry.
                     </p>
                 </div>
-                <!-- Existing large photo removed from here -->
             </section>
 
             <!-- Skills Section -->
@@ -448,6 +466,16 @@
             <p id="modalOrganization" class="text-base font-medium text-gray-500 mb-4"></p>
             <img id="modalImage" src="" alt="Project Image" class="w-full h-48 object-cover rounded-md mb-4">
             <p id="modalDescription" class="text-gray-300 mb-4"></p>
+            
+            <!-- Container for GitHub link and Sample Output -->
+            <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 mb-4">
+                <div id="githubLinkContainer" class="flex-1"></div>
+                <button id="toggleOutputBtn" class="flex-1 px-4 py-2 bg-gray-700 text-white rounded-full font-medium hover:bg-gray-600 transition duration-300 ease-in-out hidden">
+                    Show Sample Output
+                </button>
+            </div>
+            <div id="sampleOutputContainer" class="sample-output-container"></div>
+
             <div id="modalRelevance" class="relevance-output"></div>
             <button id="generateRelevanceModalBtn" class="mt-4 px-4 py-2 bg-[#00afaf] text-black rounded-full font-medium hover:bg-[#008c8c] transition duration-300 ease-in-out">✨ Show IT Relevance</button>
         </div>
@@ -476,21 +504,45 @@
                     category: "python-apps",
                     organization: "Personal Project (Python)",
                     description: "Developed a command-line calculator application in Python, demonstrating fundamental programming concepts such as input/output handling, conditional logic, and basic arithmetic operations.",
-                    image: "https://placehold.co/600x400/00afaf/ffffff?text=Python+Calculator"
+                    image: "https://placehold.co/600x400/00afaf/ffffff?text=Python+Calculator",
+                    github_link: "https://github.com/YOUR_USERNAME/YOUR_REPO/blob/main/python-projects/calculator.py", // REPLACE THIS WITH YOUR ACTUAL GITHUB LINK
+                    sample_output: `Simple Python Calculator
+Select operation:
+1. Add
+2. Subtract
+3. Multiply
+4. Divide
+5. Exit
+Enter choice(1/2/3/4/5): 1
+Enter first number: 10
+Enter second number: 5
+10.0 + 5.0 = 15.0
+Enter choice(1/2/3/4/5): 4
+Enter first number: 20
+Enter second number: 4
+20.0 / 4.0 = 5.0
+Enter choice(1/2/3/4/5): 4
+Enter first number: 10
+Enter second number: 0
+10.0 / 0.0 = Error: Division by zero!
+Enter choice(1/2/3/4/5): 5
+Exiting calculator. Goodbye!`
                 },
                 'python-tictactoe': {
                     title: "Python Tic-Tac-Toe Game",
                     category: "python-apps",
                     organization: "Personal Project (Python)",
                     description: "Implemented the classic Tic-Tac-Toe game in Python, showcasing game logic, user interaction, and state management within a console-based environment.",
-                    image: "https://placehold.co/600x400/5f9ea0/ffffff?text=Python+TicTacToe"
+                    image: "https://placehold.co/600x400/5f9ea0/ffffff?text=Python+TicTacToe",
+                    github_link: "https://github.com/YOUR_USERNAME/YOUR_REPO/blob/main/python-projects/tictactoe.py" // REPLACE THIS
                 },
                 'python-snake': {
                     title: "Python Snake Game",
                     category: "python-apps",
                     organization: "Personal Project (Python)",
                     description: "Created a simple Snake game using Python, involving concepts like game loops, collision detection, dynamic array manipulation for the snake's body, and real-time user input.",
-                    image: "https://placehold.co/600x400/a8d5d5/333333?text=Python+Snake"
+                    image: "https://placehold.co/600x400/a8d5d5/333333?text=Python+Snake",
+                    github_link: "https://github.com/YOUR_USERNAME/YOUR_REPO/blob/main/python-projects/snake_game.py" // REPLACE THIS
                 },
                 'hydrogen-production': {
                     title: "Hydrogen Production using Shell Gasification",
@@ -524,6 +576,10 @@
             const modalDescription = document.getElementById('modalDescription');
             const modalRelevance = document.getElementById('modalRelevance');
             const generateRelevanceModalBtn = document.getElementById('generateRelevanceModalBtn');
+            const githubLinkContainer = document.getElementById('githubLinkContainer');
+            const toggleOutputBtn = document.getElementById('toggleOutputBtn');
+            const sampleOutputContainer = document.getElementById('sampleOutputContainer');
+
 
             async function generateITRelevance(projectTitle, projectDescription, buttonElement, outputDiv) {
                 const originalButtonText = buttonElement.innerHTML;
@@ -575,19 +631,53 @@ Example output: 'This project showcases strong analytical and problem-solving sk
                 }
             }
 
+            function openProjectModal(project) {
+                modalTitle.textContent = project.title;
+                modalOrganization.textContent = project.organization;
+                modalImage.src = project.image;
+                modalDescription.textContent = project.description;
+                
+                // Clear previous content and hide elements
+                modalRelevance.innerHTML = '';
+                modalRelevance.classList.remove('show');
+                sampleOutputContainer.innerHTML = '';
+                sampleOutputContainer.classList.remove('show');
+                toggleOutputBtn.classList.add('hidden'); // Hide toggle button by default
+
+                // Add GitHub link if available
+                githubLinkContainer.innerHTML = ''; // Clear previous link
+                if (project.github_link) {
+                    githubLinkContainer.innerHTML = `<a href="${project.github_link}" target="_blank" class="px-4 py-2 bg-gray-700 text-white rounded-full font-medium hover:bg-gray-600 transition duration-300 ease-in-out inline-flex items-center">
+                        <i class="fab fa-github mr-2"></i> View Code on GitHub
+                    </a>`;
+                }
+
+                // Handle sample output for calculator
+                if (project.sample_output) {
+                    toggleOutputBtn.classList.remove('hidden'); // Show toggle button
+                    toggleOutputBtn.textContent = 'Show Sample Output'; // Reset button text
+                    toggleOutputBtn.onclick = () => {
+                        if (sampleOutputContainer.classList.contains('show')) {
+                            sampleOutputContainer.classList.remove('show');
+                            toggleOutputBtn.textContent = 'Show Sample Output';
+                        } else {
+                            sampleOutputContainer.innerHTML = `<pre>${project.sample_output}</pre>`;
+                            sampleOutputContainer.classList.add('show');
+                            toggleOutputBtn.textContent = 'Hide Sample Output';
+                        }
+                    };
+                }
+
+                generateRelevanceModalBtn.onclick = () => generateITRelevance(project.title, project.description, generateRelevanceModalBtn, modalRelevance);
+                projectModal.style.display = 'flex';
+            }
+
             projectCards.forEach(card => {
                 card.addEventListener('click', () => {
                     const projectKey = card.getAttribute('data-project');
                     const project = projectData[projectKey];
                     if (project) {
-                        modalTitle.textContent = project.title;
-                        modalOrganization.textContent = project.organization;
-                        modalImage.src = project.image;
-                        modalDescription.textContent = project.description;
-                        modalRelevance.innerHTML = ''; // Clear previous relevance
-                        modalRelevance.classList.remove('show');
-                        generateRelevanceModalBtn.onclick = () => generateITRelevance(project.title, project.description, generateRelevanceModalBtn, modalRelevance);
-                        projectModal.style.display = 'flex';
+                        openProjectModal(project);
                     }
                 });
             });
@@ -606,7 +696,7 @@ Example output: 'This project showcases strong analytical and problem-solving sk
             new Chart(educationCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['Class X', 'Class XII', 'B.Tech'],
+                    labels: ['Class X', 'Class XII', 'B.Tech (Current)'],
                     datasets: [{
                         label: 'Performance (%)',
                         data: [97, 84, 6.7 * 10],
@@ -691,4 +781,3 @@ Example output: 'This project showcases strong analytical and problem-solving sk
     </script>
 </body>
 </html>
-/
