@@ -483,6 +483,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            console.log("DOM Content Loaded. Initializing portfolio script.");
             
             const projectData = {
                 'ai-internship': {
@@ -505,7 +506,7 @@
                     organization: "Personal Project (Python)",
                     description: "Developed a command-line calculator application in Python, demonstrating fundamental programming concepts such as input/output handling, conditional logic, and basic arithmetic operations.",
                     image: "https://placehold.co/600x400/00afaf/ffffff?text=Python+Calculator",
-                    github_link: "https://github.com/S-Kalyani/python_calculator.git" // REPLACE THIS WITH YOUR ACTUAL GITHUB LINK
+                    github_link: "https://github.com/S-Kalyani/python_calculator.git", // REPLACE THIS WITH YOUR ACTUAL GITHUB LINK
                     sample_output: `Simple Python Calculator
 Select operation:
 1. Add
@@ -762,6 +763,7 @@ Example output: 'This project showcases strong analytical and problem-solving sk
             }
 
             function openProjectModal(project) {
+                console.log("Attempting to open modal for project:", project.title);
                 modalTitle.textContent = project.title;
                 modalOrganization.textContent = project.organization;
                 modalImage.src = project.image;
@@ -799,29 +801,36 @@ Example output: 'This project showcases strong analytical and problem-solving sk
                 }
 
                 generateRelevanceModalBtn.onclick = () => generateITRelevance(project.title, project.description, generateRelevanceModalBtn, modalRelevance);
-                projectModal.style.display = 'flex';
+                projectModal.style.display = 'flex'; // This line makes the modal visible
+                console.log("Modal display set to flex.");
             }
 
             projectCards.forEach(card => {
                 card.addEventListener('click', () => {
+                    console.log("Project card clicked.");
                     const projectKey = card.getAttribute('data-project');
                     const project = projectData[projectKey];
                     if (project) {
                         openProjectModal(project);
+                    } else {
+                        console.error("Project data not found for key:", projectKey);
                     }
                 });
             });
 
             closeButton.addEventListener('click', () => {
+                console.log("Close button clicked.");
                 projectModal.style.display = 'none';
             });
 
             window.addEventListener('click', (event) => {
                 if (event.target === projectModal) {
+                    console.log("Clicked outside modal, closing.");
                     projectModal.style.display = 'none';
                 }
             });
 
+            console.log("Initializing Chart.js for education data.");
             const educationCtx = document.getElementById('educationChart').getContext('2d');
             new Chart(educationCtx, {
                 type: 'bar',
